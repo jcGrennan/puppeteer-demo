@@ -6,6 +6,7 @@ async function downloadReports() {
     const page = await browser.newPage()
     await page.goto("https://www.sainsburys.co.uk/")
 
+    await browser.close()
 }
 
 downloadReports()
