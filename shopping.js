@@ -26,29 +26,36 @@ async function shop() {
         page.click('button[data-testid="log-in"]'),
     ])
 
-    const searchTerm = () => {
-        const args = []
+    const searchArgs = []
+
+    function searchTerm() {
         for(i = 2; i < process.argv.length; i++) {
-            args.push(process.argv[i])
+            searchArgs.push(process.argv[i])
         }
         
         if(process.argv[2]) {
-            return args.join(" ")
+            return searchArgs.join(" ")
         } else {
             return "cakes"
         }
     }
 
-    await page.type('input#search-bar-input', await searchTerm())
+    
+    await page.type('input#search-bar-input', searchTerm())
     await Promise.all([
-        page.click('button[type="submit"]'),
-        page.waitForNavigation({waitUntil: "networkidle0"})
+        page.waitForNavigation({waitUntil: "networkidle0"}),
+        page.click('button[type="submit"]')
     ])
+    
+    function getRandomNum(max) {
+        return Math.floor(Math.random() * max);
+    }
 
+    await page.waitForSelector('.ln-c-pagination__list')
     const itemArray = await page.$$('button[data-test-id="add-button"]')
-    await itemArray[3].click()
+    await itemArray[getRandomNum(itemArray.length - 1)].click()
     await page.waitForNetworkIdle({idleTime: 200})
     await browser.close()
 }
 
-shop('chicken')
+shop()
